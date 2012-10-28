@@ -12,8 +12,13 @@ prepare-master:
 test: prepare-master
 	diff 8080EX1.bin.test 8080EX1.COM.master
 
-release:
-	cp 8080EX1.bin rk86ex1.bin
+patch-ei:
+	xxd -g 1 8080EX1.bin >8080EX1.bin.hex
+	sed 's/fb 2a/00 2a/' 8080EX1.bin.hex >8080EX1.bin.hex.patched
+	xxd -r 8080EX1.bin.hex.patched > 8080EX1.bin.patched
+
+release: patch-ei
+	cp 8080EX1.bin.patched rk86ex1.bin
 
 diff:
 	xxd 8080EX1.bin.test >8080EX1.bin.test.hex
@@ -24,4 +29,6 @@ clean:
 	-rm 8080EX1.p 8080EX1.bin 8080EX1.bin.test rk86ex1.bin
 	-rm 8080EX1.COM.master
 	-rm 8080EX1.bin.test.hex 8080EX1.COM.master.hex
+	-rm 8080EX1.bin.hex 8080EX1.bin.hex.patched
+	-rm 8080EX1.bin.patched
 
