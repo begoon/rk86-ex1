@@ -44,6 +44,72 @@
 
 	cpu 8080
 	aseg
+
+monitor_hexb equ 0f815h
+monitor_putc equ 0f809h
+monitor_puts equ 0f818h
+monitor equ 0f86ch
+
+  org 0
+  jmp monitor
+
+; BDOS emulation
+
+; c=2 e=char
+; c=9 de=msg,$
+
+  org 5
+
+  mov a, c
+
+  cpi 2
+  jz putc
+
+  cpi 9
+  jz puts
+
+  call monitor_hexb
+  lxi h, endl_msg
+  call monitor_puts
+  jmp monitor
+
+putc:
+  mov c, e
+putc_c:
+  mov a, c
+  cpi 'a'
+  jm putc_nochange
+  cpi 'z'+1
+  jp putc_nochange
+  sui 020h
+  mov c, a
+putc_nochange:
+  lhld log_addr
+  mov m, c
+  inx h
+  mvi m, 0
+  shld log_addr
+  call monitor_putc
+  ret
+
+puts:
+  ldax d
+  cpi '$'
+  rz
+  mov c, a
+  call putc_c
+  inx d
+  jmp puts
+
+endl_msg: db 10, 13, 0
+log_addr: dw 4000h
+
+  org 80h
+
+  lxi h, 4000h
+  call monitor_puts
+  jmp monitor
+
 	org	100h
 
 begin:	jmp	start
