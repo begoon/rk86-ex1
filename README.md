@@ -1,19 +1,29 @@
-8080/8085 CPU Exerciser
------------------------
+8080/8085 CPU Exerciser для Радио-86РК
+--------------------------------------
 
-This is a fork of the [8080/8085 CPU Exerciser][]. The original exerciser
-is written for the M80 assembler available for CP/M only. Within this project
-the exerciser is changed to compile via [AS][] (asl), a portable macro 
-assembler available on Linux, Windows and Mac.
+Данный проект является адаптацией теста [8080/8085 CPU Exerciser][] для
+Радио-86РК. Ядро теста без каких-либо изменений. Добавлены подпрограммы
+для эмуляции BDOS: вывод символа и вывод строки. В первой подпрограмме
+также производится перевод печатаемых символов в верхний регистр. Вторая
+подпрограмма заменяет символ конца строки '$' на 0. По адресу 0000 добавлен
+переход на "мягкий" старт Монитора.
 
-The binary generated from the modified source is compared against the original
-exerciser, and it matches entirely.
+Так как количество выводимой информации может превышать размер экрана РК,
+то для избежания ее утери, подпрограмма вывода символа на экран также
+сохраняет копию всего выведенного на экран по адресу 4000h. После окончания
+теста и выхода в Монитор результы можно распечатать командой "G80".
 
-[8080/8085 CPU Exerciser]: http://www.idb.me.uk/sunhillow/8080.html
+Единственным минимальным изменением в ядре теста является замена команды
+"EI" на "NOP" для предотвращения постоянного пищания. На результаты теста
+на платформе РК данное изменение не влияет.
 
+Для сборки теста из исходников нужен ассемблер [AS][]. Можно сразу скачать
+собранный тест из каталога `./release`, файл `rk86ex1.bin`.
+
+Тест загружается с адреса 0. Запускается командой "G100". После окончания
+результаты можно распечатать повторно командой "G80".
+
+Время работы теста на частоте 2MHz около трех часов.
+
+[8080/8085 CPU Exerciser]: https://github.com/begoon/8080ex1
 [AS]: https://github.com/begoon/asl
-
-The source of this fork is based on the [Exerciser for KR580VM80A][].
-
-[Exerciser for KR580VM80A]: http://www.idb.me.uk/sunhillow/files/8080EX1.MAC
-
