@@ -14,7 +14,8 @@ test: prepare-master
 
 patch-ei:
 	xxd -g 1 8080EX1.bin >8080EX1.bin.hex
-	sed 's/fb 2a/00 2a/' 8080EX1.bin.hex >8080EX1.bin.hex.patched
+	sed 's/fb 2a/00 2a/' 8080EX1.bin.hex | \
+	sed 's/2a 06 00/21 00 50/' >8080EX1.bin.hex.patched
 	xxd -r 8080EX1.bin.hex.patched > 8080EX1.bin.patched
 
 release: patch-ei
@@ -24,6 +25,9 @@ diff:
 	xxd 8080EX1.bin.test >8080EX1.bin.test.hex
 	xxd 8080EX1.COM.master >8080EX1.COM.master.hex
 	diff 8080EX1.bin.test.hex 8080EX1.COM.master.hex
+
+load:
+	mac2rk -b rk86ex1.bin
 
 clean:
 	-rm 8080EX1.p 8080EX1.bin 8080EX1.bin.test rk86ex1.bin
